@@ -1,0 +1,31 @@
+id: org.rncbc.qjackctl
+runtime: org.kde.Platform
+runtime-version: 6.3
+sdk: org.kde.Sdk
+command: qjackctl
+finish-args:
+  - --socket=wayland
+  - --socket=x11
+  - --device=all
+  - --filesystem=xdg-run/pipewire-0
+modules:
+  - name: jack2
+    buildsystem: simple
+    build-commands:
+      - ./waf configure --prefix=$FLATPAK_DEST
+      - ./waf build -j $FLATPAK_BUILDER_N_JOBS
+      - ./waf install
+    cleanup:
+      - '*'
+    sources:
+      - type: archive
+        url: https://github.com/jackaudio/jack2/releases/download/v1.9.14/v1.9.14.tar.gz
+        sha256: a20a32366780c0061fd58fbb5f09e514ea9b7ce6e53b080a44b11a558a83217c
+  - name: qjackctl
+    buildsystem: cmake
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+    sources:
+      - type: archive
+        url: https://downloads.sourceforge.net/qjackctl/qjackctl-0.9.7.tar.gz
+        sha256: 524843618152070c90a40a18d0e9a16e784424ce54231aff5c0ced12f2769080
